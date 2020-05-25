@@ -59,9 +59,9 @@ class Streaming(private val client: MastodonClient) {
 
     @Throws(Mastodon4jRequestException::class)
     fun localPublic(handler: Handler): Shutdownable {
-        val response = client.get("streaming/public/local")
+        var response = client.get("streaming/public/local")
         if (response.isSuccessful) {
-            val reader = response.body().byteStream().bufferedReader()
+            var reader = response.body().byteStream().bufferedReader()
             val dispatcher = Dispatcher()
             dispatcher.invokeLater(Runnable {
                 while (true) {
@@ -91,6 +91,11 @@ class Streaming(private val client: MastodonClient) {
                         }
                     }catch (e:java.io.InterruptedIOException){
                         break
+                    } catch(e:java.io.EOFException){
+                        handler.log("Mastodon response produced end-of-file exception, restarting connection...")
+                        // Sometimes mastodon instance just messes up stream, try to re-establish connection...
+                        response = client.get("streaming/public/local")
+                        reader = response.body().byteStream().bufferedReader()
                     }
                 }
                 reader.close()
@@ -150,12 +155,12 @@ class Streaming(private val client: MastodonClient) {
 
     @Throws(Mastodon4jRequestException::class)
     fun localHashtag(tag: String, handler: Handler): Shutdownable {
-        val response = client.get(
+        var response = client.get(
                 "streaming/hashtag/local",
                 Parameter().append("tag", tag)
         )
         if (response.isSuccessful) {
-            val reader = response.body().byteStream().bufferedReader()
+            var reader = response.body().byteStream().bufferedReader()
             val dispatcher = Dispatcher()
             dispatcher.invokeLater(Runnable {
                 while (true) {
@@ -185,6 +190,14 @@ class Streaming(private val client: MastodonClient) {
                         }
                     }catch (e:java.io.InterruptedIOException){
                         break
+                    }catch(e:java.io.EOFException){
+                        handler.log("Mastodon response produced end-of-file exception, restarting connection...")
+                        // Sometimes mastodon instance just messes up stream, try to re-establish connection...
+                        response = client.get(
+                                "streaming/hashtag",
+                                Parameter().append("tag", tag)
+                        )
+                        reader = response.body().byteStream().bufferedReader()
                     }
                 }
                 reader.close()

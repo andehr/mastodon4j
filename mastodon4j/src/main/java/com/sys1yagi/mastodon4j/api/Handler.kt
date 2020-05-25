@@ -6,6 +6,8 @@ import com.sys1yagi.mastodon4j.api.entity.Status
 
 interface Handler {
 
+    fun log(message: String)
+
     fun onStatus(status: Status)
 
     //ignore if public streaming

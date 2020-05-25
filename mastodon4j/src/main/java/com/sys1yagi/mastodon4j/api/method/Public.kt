@@ -36,13 +36,16 @@ class Public(private val client: MastodonClient) {
      * @see https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#search
      */
     @JvmOverloads
-    fun getSearch(query: String, resolve: Boolean = false): MastodonRequest<Results> {
+    fun getSearch(query: String, resolve: Boolean = false, type: String = "statuses", offset: Int = 0, limit: Int = 40): MastodonRequest<Results> {
         return MastodonRequest<Results>(
                 {
-                    client.get(
+                    client.get2(
                             "search",
                             Parameter().apply {
                                 append("q", query)
+                                append("offset", offset)
+                                append("limit", limit)
+                                append("type", type)
                                 if (resolve) {
                                     append("resolve", resolve)
                                 }
