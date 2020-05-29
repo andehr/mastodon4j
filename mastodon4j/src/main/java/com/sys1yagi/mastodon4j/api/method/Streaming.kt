@@ -15,15 +15,23 @@ import kotlin.concurrent.withLock
 class Streaming(private val client: MastodonClient) {
     @Throws(Mastodon4jRequestException::class)
     fun federatedPublic(handler: Handler): Shutdownable {
-        val response = client.get("streaming/public")
+        var response = client.get("streaming/public")
         if (response.isSuccessful) {
-            val reader = response.body().byteStream().bufferedReader()
+            var reader = response.body().byteStream().bufferedReader()
             val dispatcher = Dispatcher()
             dispatcher.invokeLater(Runnable {
                 while (true) {
                     try{
                         val line = reader.readLine()
-                        if (line == null || line.isEmpty()) {
+                        if (line == null){
+                            // Stream seems not to recover from receiving nulls from mastodon, so restarting
+                            handler.log("Mastodon response produced null, restarting connection...")
+                            // Sometimes mastodon instance just messes up stream, try to re-establish connection...
+                            response = client.get("streaming/public")
+                            reader = response.body().byteStream().bufferedReader()
+                            continue
+                        }
+                        if (line.isEmpty()) {
                             continue
                         }
                         val type = line.split(":")[0].trim()
@@ -47,6 +55,11 @@ class Streaming(private val client: MastodonClient) {
                         }
                     }catch (e:java.io.InterruptedIOException){
                         break
+                    }catch(e:java.io.EOFException){
+                        handler.log("Mastodon response produced end-of-file exception, restarting connection...")
+                        // Sometimes mastodon instance just messes up stream, try to re-establish connection...
+                        response = client.get("streaming/public")
+                        reader = response.body().byteStream().bufferedReader()
                     }
                 }
                 reader.close()
