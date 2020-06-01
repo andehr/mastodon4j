@@ -23,7 +23,7 @@ version = '1.7.0'
 allprojects {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" }
+        maven { url "http://tag-compute.inf.sussex.ac.uk/mvn/release" }
     }
 }
 
