@@ -45,24 +45,24 @@ class PublicTest {
         publicMethod.getInstance().execute()
     }
 
-    @Test
-    fun getSearch() {
-        val client = MockClient.mock("search.json")
+//    @Test
+//    fun getSearch() {
+//        val client = MockClient.mock("search.json")
+//
+//        val publicMethod = Public(client)
+//        val result = publicMethod.getSearch("test").execute()
+//        result.statuses.size shouldEqualTo 0
+//        result.accounts.size shouldEqualTo 6
+//        result.hashtags.size shouldEqualTo 5
+//        result.hashtags.size shouldEqualTo 5
+//    }
 
-        val publicMethod = Public(client)
-        val result = publicMethod.getSearch("test").execute()
-        result.statuses.size shouldEqualTo 0
-        result.accounts.size shouldEqualTo 6
-        result.hashtags.size shouldEqualTo 5
-        result.hashtags.size shouldEqualTo 5
-    }
-
-    @Test(expected = Mastodon4jRequestException::class)
-    fun getSearchWithException() {
-        val client = MockClient.ioException()
-        val publicMethod = Public(client)
-        publicMethod.getSearch("test").execute()
-    }
+//    @Test(expected = Mastodon4jRequestException::class)
+//    fun getSearchWithException() {
+//        val client = MockClient.ioException()
+//        val publicMethod = Public(client)
+////        publicMethod.getSearch("test").execute()
+//    }
 
     @Test
     fun getLocalPublic() {

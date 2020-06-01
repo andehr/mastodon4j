@@ -70,14 +70,20 @@ private constructor(
     }
 
     val baseUrl = "https://${instanceName}/api/v1"
+    val baseUrl2 = "https://${instanceName}/api/v2"
 
     open fun getSerializer() = gson
 
     open fun getInstanceName() = instanceName
 
-    open fun get(path: String, parameter: Parameter? = null): Response {
+    open fun get(path: String, parameter: Parameter? = null) =
+            getUrl("$baseUrl/$path", parameter)
+
+    open fun get2(path: String, parameter: Parameter? = null) =
+            getUrl("$baseUrl2/$path", parameter)
+
+    open fun getUrl(url: String, parameter: Parameter? = null): Response {
         try {
-            val url = "$baseUrl/$path"
             debugPrint(url)
             val urlWithParams = parameter?.let {
                 "$url?${it.build()}"

@@ -16,6 +16,10 @@ class RxStreaming(client: MastodonClient) {
     private fun stream(f: (Handler) -> Shutdownable): Flowable<Status> {
         return Flowable.create<Status>({ emmiter ->
             val shutdownable = f(object : Handler {
+                override fun log(message: String) {
+
+                }
+
                 override fun onStatus(status: Status) {
                     emmiter.onNext(status)
                 }

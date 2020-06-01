@@ -23,6 +23,11 @@ public class StreamPublicTimeline {
                 .build();
         Handler handler = new Handler() {
             @Override
+            public void log(@NotNull String message) {
+
+            }
+
+            @Override
             public void onStatus(@NotNull Status status) {
                 System.out.println(status.getContent());
             }
