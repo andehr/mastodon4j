@@ -39,7 +39,10 @@ dependencies {
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
+//        mavenCentral()
+        maven {
+            url = uri("http://tag-compute.inf.sussex.ac.uk/mvn/release")
+        }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -47,5 +50,8 @@ buildscript {
 }
 repositories {
     mavenLocal()
-    mavenCentral()
+//    mavenCentral()
+    maven {
+        url = uri("http://tag-compute.inf.sussex.ac.uk/mvn/release")
+    }
 }
